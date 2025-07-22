@@ -4,10 +4,11 @@ using NFluidsynth;
 using PianoStream.Utils;
 using System.IO;
 using System.Windows;
+using Wpf.Ui.Controls;
 
 namespace PianoStream
 {
-    public partial class MainWindow : Window
+    public partial class MainWindow : FluentWindow
     {
         private MidiIn? midiIn; 
         private Synth? synth; 
