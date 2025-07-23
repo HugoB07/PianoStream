@@ -105,6 +105,8 @@ namespace PianoStream
                 midiIn.ErrorReceived += (s, ev) => Log("MIDI Error : " + ev.RawMessage);
                 midiIn.Start();
                 Log("MIDI input started.");
+
+                VolumeSlider.IsEnabled = true;
             }
             catch (Exception ex)
             {

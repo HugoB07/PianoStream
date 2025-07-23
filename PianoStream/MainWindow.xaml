@@ -37,9 +37,9 @@
 
                 <Label Content="Volume :" VerticalAlignment="Center" />
                 <Slider x:Name="VolumeSlider" Minimum="0.1" Maximum="1" Value="1"
-            Width="150" TickFrequency="0.1" IsSnapToTickEnabled="True"
-            ValueChanged="VolumeSlider_ValueChanged" Margin="5,0,5,0"
-            VerticalAlignment="Center"/>
+                        Width="150" TickFrequency="0.1" IsSnapToTickEnabled="True"
+                        ValueChanged="VolumeSlider_ValueChanged" Margin="5,0,5,0"
+                        IsEnabled="False" VerticalAlignment="Center"/>
                 <ui:TextBlock x:Name="VolumeValueText" Text="100%" VerticalAlignment="Center" Width="40" TextAlignment="Center"/>
                 <CheckBox x:Name="NoiseCancellationCheckBox"
                   Content="Noise Cancellation"
