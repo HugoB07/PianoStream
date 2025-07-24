@@ -60,18 +60,56 @@ namespace PianoStream
         #region UI Event Handlers
         private void StartButton_Click(object sender, RoutedEventArgs e)
         {
+            if (synth == null)
+            {
+                InitializeSynth();
+                StartButton.Content = "Stop Piano";
+            }
+            else
+            {
+                DisposeSynth();
+                StartButton.Content = "Start Piano";
+                Log("Synth stopped.");
+            }
+        }
+
+        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        {
             if (synth != null)
             {
-                Log("Synth already started");
-                return; 
+                synth.Gain = (float)e.NewValue;
+                VolumeValueText.Text = $"{(int)(synth.Gain * 100)}%";
+                Log($"Volume set to {(int)(synth.Gain * 100)}%");
             }
+        }
 
+        private void NoiseCancellationCheckBox_Checked(object sender, RoutedEventArgs e)
+        {
+            if (waveProvider != null)
+            {
+                waveProvider.EnableNoiseCancellation = true;
+            }
+            Log("Noise cancellation: ON");
+        }
+
+        private void NoiseCancellationCheckBox_Unchecked(object sender, RoutedEventArgs e)
+        {
+            if (waveProvider != null)
+            {
+                waveProvider.EnableNoiseCancellation = false;
+            }
+            Log("Noise cancellation: OFF");
+        }
+        #endregion
+
+        #region Synth Methods
+        private void InitializeSynth()
+        {
             try
             {
-                // Init FluidSynth  
                 settings = new Settings();
                 synth = new Synth(settings);
-                synth.Gain = 1;
+                synth.Gain = (float)VolumeSlider.Value;
 
                 waveOut = new WaveOutEvent
                 {
@@ -114,32 +152,22 @@ namespace PianoStream
             }
         }
 
-        private void VolumeSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
+        private void DisposeSynth()
         {
-            if (synth != null)
-            {
-                synth.Gain = (float)e.NewValue;
-                VolumeValueText.Text = $"{(int)(synth.Gain * 100)}%";
-                Log($"Volume set to {(int)(synth.Gain * 100)}%");
-            }
-        }
+            midiIn?.Stop();
+            midiIn?.Dispose();
+            midiIn = null;
 
-        private void NoiseCancellationCheckBox_Checked(object sender, RoutedEventArgs e)
-        {
-            if (waveProvider != null)
-            {
-                waveProvider.EnableNoiseCancellation = true;
-            }
-            Log("Noise cancellation: ON");
-        }
+            waveOut?.Stop();
+            waveOut?.Dispose();
+            waveOut = null;
 
-        private void NoiseCancellationCheckBox_Unchecked(object sender, RoutedEventArgs e)
-        {
-            if (waveProvider != null)
-            {
-                waveProvider.EnableNoiseCancellation = false;
-            }
-            Log("Noise cancellation: OFF");
+            synth?.Dispose();
+            synth = null;
+
+            waveProvider = null;
+
+            VolumeSlider.IsEnabled = false;
         }
         #endregion
 
@@ -191,10 +219,7 @@ namespace PianoStream
 
         private void DisposeResources()
         {
-            midiIn?.Stop();
-            midiIn?.Dispose();
-            synth?.Dispose();
-            waveOut?.Dispose();
+            DisposeSynth();
         }
         #endregion
     }
