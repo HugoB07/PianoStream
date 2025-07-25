@@ -1,8 +1,8 @@
-﻿using NAudio.Midi;
+﻿using Microsoft.Extensions.Logging;
+using NAudio.Midi;
 using NFluidsynth;
 using PianoStream.Core.Audio;
 using PianoStream.Core.Midi;
-using System.Windows;
 
 namespace PianoStream.Core
 {
@@ -11,12 +11,17 @@ namespace PianoStream.Core
         private SynthEngine? _synthEngine;
         private WaveEngine? _waveEngine;
         private SoundFontManager? _soundFontManager;
-        private MidiInputHandler? _midiHandler;
+        private MidiInputHandler? _midiHandler; 
+        private readonly ILogger<PianoSynthController>? _logger;
 
-        public event Action<string>? OnLog;
         public event Action<MidiInMessageEventArgs>? OnMidiRaw;
 
         public bool IsInitialized => _synthEngine != null;
+
+        public PianoSynthController(ILogger<PianoSynthController> logger)
+        {
+            _logger = logger;
+        }
 
         public void Initialize(string soundFontPath, bool noiseCancel, int midiDeviceIndex)
         {
@@ -26,11 +31,12 @@ namespace PianoStream.Core
             // Ensure _synthEngine.Synth is not null before passing it to SoundFontManager  
             if (_synthEngine.Synth == null)
             {
-                throw new InvalidOperationException("SynthEngine.Synth is null. Initialization failed.");
+                _logger?.LogError("SynthEngine.Synth is null. Initialization failed.");
+                return;
             }
 
             _soundFontManager = new SoundFontManager(_synthEngine.Synth);
-            _midiHandler = new MidiInputHandler();
+            _midiHandler = new MidiInputHandler(App.GetLogger<MidiInputHandler>());
 
             _synthEngine.SetGain(1.0f);
             _waveEngine.Init(_synthEngine.Synth, noiseCancel);
@@ -45,16 +51,16 @@ namespace PianoStream.Core
                 }
                 catch (FluidSynthInteropException ex)
                 {
-                    Log("Synth error: " + ex.Message);
+                    _logger?.LogError("Synth error: " + ex.Message);
                 }
                 catch (Exception ex)
                 {
-                    Log("Unhandled MIDI error: " + ex.Message);
+                    _logger?.LogError("Unhandled MIDI error: " + ex.Message);
                 }
             };
 
             _midiHandler.Start(midiDeviceIndex);
-            Log("Synth and MIDI initialized");
+            _logger?.LogInformation("Synth and MIDI initialized");
         }
 
         public void SetGain(float gain) => _synthEngine?.SetGain(gain);
@@ -69,15 +75,7 @@ namespace PianoStream.Core
             _midiHandler = null;
             _waveEngine = null;
             _synthEngine = null;
-            Log("Synth and MIDI disposed");
-        }
-
-        private void Log(string msg)
-        {
-            Application.Current.Dispatcher.Invoke(() =>
-            {
-                OnLog?.Invoke(msg);
-            });
+            _logger?.LogInformation("Synth and MIDI disposed");
         }
     }
 }

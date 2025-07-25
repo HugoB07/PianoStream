@@ -4,6 +4,7 @@ using System.Windows;
 using System.Windows.Controls;
 using PianoStream.Core.Services;
 using PianoStream.Core.Models;
+using Microsoft.Extensions.Logging;
 
 namespace PianoStream.UI.Views
 {
@@ -11,18 +12,19 @@ namespace PianoStream.UI.Views
     {
         private PianoSynthController? _controller;
         private SoundFontService? _soundFontService;
-        private MidiDeviceService? _midiDeviceService;
+        private MidiDeviceService? _midiDeviceService; 
+        private readonly ILogger<PianoPage> _logger;
 
         public PianoPage()
         {
             InitializeComponent();
+            _logger = App.GetLogger<PianoPage>();
             _midiDeviceService = new MidiDeviceService();
             _midiDeviceService.DevicesUpdated += UpdateMidiDeviceComboBox;
             _midiDeviceService.StartMonitoring();
 
             _soundFontService = new SoundFontService(AppDomain.CurrentDomain.BaseDirectory);
-            _controller = new PianoSynthController();
-            _controller.OnLog += Log;
+            _controller = new PianoSynthController(App.GetLogger<PianoSynthController>());
             _controller.OnMidiRaw += HandleMidiRaw;
 
             LoadSoundFonts();
@@ -35,7 +37,7 @@ namespace PianoStream.UI.Views
             {
                 if (_soundFontService == null)
                 {
-                    Log("SoundFontService is not initialized.");
+                    _logger.LogWarning("SoundFontService is not initialized.");
                     return;
                 }
 
@@ -43,7 +45,7 @@ namespace PianoStream.UI.Views
 
                 if (fonts.Count == 0)
                 {
-                    Log("No SoundFont (.sf2) available in Assets.");
+                    _logger.LogInformation("No SoundFont (.sf2) available in Assets.");
                     return;
                 }
 
@@ -53,11 +55,11 @@ namespace PianoStream.UI.Views
                 }
 
                 SoundFontComboBox.SelectedIndex = 0;
-                Log($"SoundFonts available : {fonts.Count}");
+                _logger.LogInformation($"SoundFonts available : {fonts.Count}");
             }
             catch (Exception ex)
             {
-                Log("Loading Error SoundFonts : " + ex.Message);
+                _logger.LogError("Loading Error SoundFonts : " + ex.Message);
             }
         }
         #endregion
@@ -76,7 +78,7 @@ namespace PianoStream.UI.Views
                 if (MidiDeviceComboBox.Items.Count > 0 && MidiDeviceComboBox.SelectedIndex == -1)
                 {
                     MidiDeviceComboBox.SelectedIndex = 0;
-                    Log($"MIDI Devices found: {devices.Count}");
+                    _logger.LogInformation($"MIDI Devices found: {devices.Count}");
                 }
             });
         }
@@ -91,7 +93,7 @@ namespace PianoStream.UI.Views
             int data1 = (raw >> 8) & 0xFF;
             int data2 = (raw >> 16) & 0xFF;
 
-            Dispatcher.Invoke(() => Log($"MIDI: cmd=0x{command:X2} ch={channel} data1={data1} data2={data2}"));
+            Dispatcher.Invoke(() => _logger.LogDebug($"MIDI: cmd=0x{command:X2} ch={channel} data1={data1} data2={data2}"));
         }
         #endregion
 
@@ -100,7 +102,7 @@ namespace PianoStream.UI.Views
         {
             if (_soundFontService == null)
             {
-                Log("SoundFontService is not initialized.");
+                _logger.LogWarning("SoundFontService is not initialized.");
                 return;
             }
 
@@ -109,7 +111,7 @@ namespace PianoStream.UI.Views
                 var soundFontFile = SoundFontComboBox.SelectedItem?.ToString();
                 if (string.IsNullOrEmpty(soundFontFile))
                 {
-                    Log("Invalid SoundFont selected.");
+                    _logger.LogWarning("Invalid SoundFont selected.");
                     return;
                 }
 
@@ -125,7 +127,7 @@ namespace PianoStream.UI.Views
                 _controller.Dispose();
                 StartButton.Content = "Start Piano";
                 VolumeSlider.IsEnabled = false;
-                Log("Synth stopped.");
+                _logger.LogInformation("Synth stopped.");
             }
         }
 
@@ -135,7 +137,7 @@ namespace PianoStream.UI.Views
             {
                 _controller.SetGain((float)e.NewValue);
                 VolumeValueText.Content = $"{(int)(e.NewValue * 100)}%";
-                Log($"Volume set to {(int)(e.NewValue * 100)}%");
+                _logger.LogInformation($"Volume set to {(int)(e.NewValue * 100)}%");
             }
         }
 
@@ -143,30 +145,22 @@ namespace PianoStream.UI.Views
         {
             if (_controller == null)
             {
-                Log("Controller is not initialized.");
+                _logger.LogWarning("Controller is not initialized.");
                 return;
             }
             _controller.SetNoiseCancellation(true);
-            Log("Noise cancellation: ON");
+            _logger.LogInformation("Noise cancellation: ON");
         }
 
         private void NoiseCancellationCheckBox_Unchecked(object sender, RoutedEventArgs e)
         {
             if (_controller == null)
             {
-                Log("Controller is not initialized.");
+                _logger.LogWarning("Controller is not initialized.");
                 return;
             }
             _controller.SetNoiseCancellation(false);
-            Log("Noise cancellation: OFF");
-        }
-        #endregion
-
-        #region Utilities
-        private void Log(string message)
-        {
-            LogBox.AppendText($"{DateTime.Now:HH:mm:ss} - {message}\n");
-            LogBox.ScrollToEnd();
+            _logger.LogInformation("Noise cancellation: OFF");
         }
         #endregion
 

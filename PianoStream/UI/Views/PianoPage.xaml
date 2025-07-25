@@ -50,16 +50,5 @@
                       VerticalAlignment="Center"/>
             </StackPanel>
         </WrapPanel>
-
-        <!-- Log Box -->
-        <ui:TextBox Name="LogBox"
-                    Grid.Row="1"
-                    IsReadOnly="True"
-                    VerticalScrollBarVisibility="Auto"
-                    TextWrapping="Wrap"
-                    AcceptsReturn="True"
-                    FontFamily="Consolas"
-                    FontSize="12" 
-                    MaxHeight="600"/>
     </Grid>
 </Page>
