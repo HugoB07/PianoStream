@@ -2,55 +2,74 @@
     x:Class="PianoStream.MainWindow"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:local="clr-namespace:PianoStream"
-    mc:Ignorable="d"
-    Height="550"
-    Width="950"
-    xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml">
+    xmlns:pages="clr-namespace:PianoStream.UI.Views"
+    Title="Piano Stream"
+    ExtendsContentIntoTitleBar="True"
+    SizeChanged="MainWindow_OnSizeChanged"
+    d:DesignHeight="650"
+    d:DesignWidth="1000"
+    Width="1450"
+    Height="802"
+    MinWidth="900"
+    WindowBackdropType="Mica"
+    WindowCornerPreference="Default"
+    WindowStartupLocation="CenterScreen"
+    mc:Ignorable="d">
 
-    <Grid Margin="0">
-        <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
-            <RowDefinition Height="1" />
-            <RowDefinition Height="*"/>
-        </Grid.RowDefinitions>
-
-        <ui:TitleBar Title="Piano Stream"
-                 ShowMinimize="True"
-                 ShowMaximize="True"
-                 ShowClose="True"
-                 Grid.Row="0"/>
-
-        <Grid Margin="10" Grid.Row="2">
-            <Grid.RowDefinitions>
-                <RowDefinition Height="Auto"/>
-                <RowDefinition Height="*"/>
-            </Grid.RowDefinitions>
-            
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" Margin="0,0,0,10" Grid.Row="0" >
-                <ui:Button Name="StartButton" Content="Start Piano" Width="130" Height="35" Margin="0,0,20,0" Click="StartButton_Click"/>
-
-                <Label Content="SoundFont :" VerticalAlignment="Center" />
-                <ComboBox x:Name="SoundFontComboBox" Width="250" Margin="5,0,20,0" VerticalAlignment="Center" />
-
-                <Label Content="Volume :" VerticalAlignment="Center" />
-                <Slider x:Name="VolumeSlider" Minimum="0.1" Maximum="1" Value="1"
-                        Width="150" TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        ValueChanged="VolumeSlider_ValueChanged" Margin="5,0,5,0"
-                        IsEnabled="False" VerticalAlignment="Center"/>
-                <ui:TextBlock x:Name="VolumeValueText" Text="100%" VerticalAlignment="Center" Width="40" TextAlignment="Center"/>
-                <CheckBox x:Name="NoiseCancellationCheckBox"
-                  Content="Noise Cancellation"
-                  Margin="20,0,0,0"
-                  VerticalAlignment="Center"
-                  Checked="NoiseCancellationCheckBox_Checked"
-                  Unchecked="NoiseCancellationCheckBox_Unchecked"/>
-            </StackPanel>
-
-            <ui:TextBox Name="LogBox" Grid.Row="1" IsReadOnly="True" VerticalScrollBarVisibility="Auto" TextWrapping="Wrap" AcceptsReturn="True"
-                 FontFamily="Consolas" FontSize="12" IsEnabled="False"/>
-        </Grid>
+    <Grid>
+        <ui:TitleBar
+            x:Name="TitleBar" 
+            Title="Piano Stream" 
+            CloseWindowByDoubleClickOnIcon="True">
+        </ui:TitleBar>
+        
+        <ui:NavigationView
+            x:Name="NavigationView"
+            Margin="0, -1.4, 0, 0"
+            Padding="42,0,42,0"
+            EnableDebugMessages="True"
+            FrameMargin="0"
+            IsBackButtonVisible="Visible"
+            IsPaneToggleVisible="True"
+            OpenPaneLength="310"
+            PaneClosed="NavigationView_OnPaneClosed"
+            PaneDisplayMode="Left"
+            PaneOpened="NavigationView_OnPaneOpened"
+            SelectionChanged="OnNavigation_SelectionChanged"
+            TitleBar="{Binding ElementName=TitleBar, Mode=OneWay}"
+            Transition="FadeInWithSlide">
+            <ui:NavigationView.AutoSuggestBox>
+                <ui:AutoSuggestBox x:Name="AutoSuggestBox" PlaceholderText="Search">
+                    <ui:AutoSuggestBox.Icon>
+                        <ui:IconSourceElement>
+                            <ui:SymbolIconSource Symbol="Search24" />
+                        </ui:IconSourceElement>
+                    </ui:AutoSuggestBox.Icon>
+                </ui:AutoSuggestBox>
+            </ui:NavigationView.AutoSuggestBox>
+            <ui:NavigationView.MenuItems>
+                <ui:NavigationViewItem Content="Piano" TargetPageType="{x:Type pages:PianoPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Home24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+                <ui:NavigationViewItem Content="Record" TargetPageType="{x:Type pages:RecordPage}">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="DataHistogram24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.MenuItems>
+            <ui:NavigationView.FooterMenuItems>
+                <ui:NavigationViewItem Content="Settings">
+                    <ui:NavigationViewItem.Icon>
+                        <ui:SymbolIcon Symbol="Settings24" />
+                    </ui:NavigationViewItem.Icon>
+                </ui:NavigationViewItem>
+            </ui:NavigationView.FooterMenuItems>
+        </ui:NavigationView>
     </Grid>
 </ui:FluentWindow>

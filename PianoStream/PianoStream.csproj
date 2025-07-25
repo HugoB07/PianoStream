@@ -16,7 +16,7 @@
   </ItemGroup>
 
   <ItemGroup>
-	<None Update="Assets\*.sf2">
+	<None Update="Assets\SF2\*.sf2">
 	  <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	</None>
     <None Update="ExternalDll\fluidsynth.dll">
