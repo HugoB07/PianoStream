@@ -5,50 +5,83 @@
     xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
     Unloaded="PianoPage_Unloaded">
 
-    <Grid Margin="0,20,0,0">
+    <Grid Margin="10,20,10,10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
-        <!-- Responsive top controls -->
-        <WrapPanel Grid.Row="0" Margin="0,0,0,10" VerticalAlignment="Top" ItemHeight="50" ItemWidth="Auto">
-            <ui:Button Name="StartButton"
-                       Content="Start Piano"
-                       MinWidth="120"
-                       Margin="5"
-                       Click="StartButton_Click"/>
+        <!-- Zone contrôles avec fond et bordure -->
+        <Border Grid.Row="0" 
+                BorderBrush="Gray" 
+                BorderThickness="1" 
+                CornerRadius="8"
+                Padding="10"
+                Margin="0,0,0,15">
+            <WrapPanel VerticalAlignment="Top" ItemHeight="58" ItemWidth="Auto" HorizontalAlignment="Left" >
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-                <Label Content="SoundFont :" VerticalAlignment="Center"/>
-                <ComboBox x:Name="SoundFontComboBox" Width="200" Margin="5,0"/>
+                <!-- Bouton Start -->
+                <ui:Button Name="StartButton"
+                           Content="Start Piano"
+                           MinWidth="120"
+                           Height="47"
+                           Margin="5"
+                           Padding="10,5"
+                           Click="StartButton_Click"/>
+
+                <!-- SoundFont -->
+                <Border Padding="5" Margin="5" CornerRadius="6" BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Content="SoundFont :" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="SoundFontComboBox" Width="200" Margin="5,0"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Volume -->
+                <Border Padding="5" Margin="5" CornerRadius="6" BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Content="Volume :" VerticalAlignment="Center"/>
+                        <Slider x:Name="VolumeSlider"
+                                Minimum="0.1" Maximum="1" Value="1"
+                                Width="120"
+                                TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                ValueChanged="VolumeSlider_ValueChanged"
+                                IsEnabled="False" Margin="5,0"/>
+                        <Label x:Name="VolumeValueText" Content="100%" VerticalAlignment="Center" Width="40"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- Noise Cancellation -->
+                <Border Padding="5" Margin="5" CornerRadius="6" BorderBrush="Gray" BorderThickness="1">
+                    <CheckBox x:Name="NoiseCancellationCheckBox"
+                              Content="Noise Cancellation"
+                              VerticalAlignment="Center"
+                              Checked="NoiseCancellationCheckBox_Checked"
+                              Unchecked="NoiseCancellationCheckBox_Unchecked"/>
+                </Border>
+
+                <!-- MIDI Device -->
+                <Border Padding="5" Margin="5" CornerRadius="6" BorderBrush="Gray" BorderThickness="1">
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Label Content="MIDI Device :" VerticalAlignment="Center"/>
+                        <ComboBox x:Name="MidiDeviceComboBox"
+                                  Width="200"
+                                  Margin="5,0"
+                                  VerticalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+
+            </WrapPanel>
+        </Border>
+
+        <!-- Zone centrale simple -->
+        <Border Grid.Row="1" CornerRadius="12" Margin="0,10,0,0" Padding="20" HorizontalAlignment="Center" VerticalAlignment="Center" Width="400" Height="250" >
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" >
+                <ui:TextBlock Text="🎹 Welcome to PianoStream 🎹" Foreground="LightGray" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,15"/>
+                <ui:TextBlock Text="Start playing by selecting your SoundFont and MIDI device, then click Start." 
+                           FontSize="14" Foreground="LightGray" TextAlignment="Center" TextWrapping="Wrap" Width="350"/>
             </StackPanel>
+        </Border>
 
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-                <Label Content="Volume :" VerticalAlignment="Center"/>
-                <Slider x:Name="VolumeSlider"
-                        Minimum="0.1" Maximum="1" Value="1"
-                        Width="120"
-                        TickFrequency="0.1" IsSnapToTickEnabled="True"
-                        ValueChanged="VolumeSlider_ValueChanged"
-                        IsEnabled="False" Margin="5,0"/>
-                <Label x:Name="VolumeValueText" Content="100%" VerticalAlignment="Center" Width="40"/>
-            </StackPanel>
-
-            <CheckBox x:Name="NoiseCancellationCheckBox"
-                      Content="Noise Cancellation"
-                      Margin="10,0"
-                      VerticalAlignment="Center"
-                      Checked="NoiseCancellationCheckBox_Checked"
-                      Unchecked="NoiseCancellationCheckBox_Unchecked"/>
-
-            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="5">
-                <Label Content="MIDI Device :" VerticalAlignment="Center"/>
-                <ComboBox x:Name="MidiDeviceComboBox"
-                      Width="200"
-                      Margin="5,0"
-                      VerticalAlignment="Center"/>
-            </StackPanel>
-        </WrapPanel>
     </Grid>
 </Page>
