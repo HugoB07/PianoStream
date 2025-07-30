@@ -312,6 +312,11 @@ namespace PianoStream.UI.Views
         {
             if (_controller == null || _soundFontService == null) return null;
 
+            if(_controller.IsInitialized)
+            {
+                return _controller?.Synth;
+            }
+
             _controller?.Initialize(_soundFontService.GetFullPath(soundFont), false, 0);
             return _controller?.Synth;
         }
