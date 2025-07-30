@@ -26,7 +26,9 @@
             Title="Piano Stream" 
             CloseWindowByDoubleClickOnIcon="True">
         </ui:TitleBar>
-        
+
+        <ContentPresenter x:Name="GlobalDialogHost" Panel.ZIndex="1000"/>
+
         <ui:NavigationView
             x:Name="NavigationView"
             Margin="0, -1.4, 0, 0"

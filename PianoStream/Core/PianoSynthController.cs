@@ -17,6 +17,8 @@ namespace PianoStream.Core
         public event Action<MidiInMessageEventArgs>? OnMidiRaw;
 
         public bool IsInitialized => _synthEngine != null;
+        
+        public Synth? Synth => _synthEngine?.Synth;
 
         public PianoSynthController(ILogger<PianoSynthController> logger)
         {
