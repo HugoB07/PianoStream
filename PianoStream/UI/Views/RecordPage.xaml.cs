@@ -189,7 +189,7 @@ namespace PianoStream.UI.Views
                 {
                     var recordingName = RecordingNameTextBox.Text.Trim();
                     var soundFont = RecordSoundFontComboBox.SelectedItem?.ToString() ?? "";
-                    var midiDeviceIndex = Math.Max(0, MidiDeviceComboBox.SelectedIndex - 1); // -1 car "No MIDI Device" est à l'index 0
+                    var midiDeviceIndex = Math.Max(0, MidiDeviceComboBox.SelectedIndex);
 
                     if (string.IsNullOrEmpty(recordingName))
                     {
@@ -197,8 +197,9 @@ namespace PianoStream.UI.Views
                         RecordingNameTextBox.Text = recordingName;
                     }
 
-                    if (!_controller.IsInitialized && _soundFontService != null)
+                    if (_controller != null && _soundFontService != null)
                     {
+                        _controller.Dispose();
                         InitializePianoController(soundFont, midiDeviceIndex);
                     }
 
@@ -397,6 +398,12 @@ namespace PianoStream.UI.Views
                 }
 
                 var soundFont = GetSelectedPlaybackSoundFont(_selectedRecording);
+                if (_controller != null && _controller.IsInitialized)
+                {
+                    _controller.Dispose(); 
+                    var midiDeviceIndex = Math.Max(0, MidiDeviceComboBox.SelectedIndex);
+                    InitializePianoController(soundFont, midiDeviceIndex);
+                }
                 var synth = GetOrCreateSynth(soundFont);
 
                 if (synth == null)
