@@ -27,12 +27,12 @@ jobs:
     - name: Create publish profile file
       run: |
         mkdir -p Properties/PublishProfiles
-        echo "${{ secrets.PUBLISH_PROFILE }}" > PianoStream/Properties/PublishProfiles/FolderProfile.pubxml
+        echo "${{ secrets.PUBLISH_PROFILE }}" > Properties/PublishProfiles/FolderProfile.pubxml
       shell: bash
 
     - name: Publish using publish profile
       run: |
-        dotnet publish -c Release -p:PublishProfile=PianoStream/Properties/PublishProfiles/FolderProfile.pubxml
+        dotnet publish -c Release -p:PublishProfile=Properties/PublishProfiles/FolderProfile.pubxml
 
     - name: Archive published output
       run: |
