@@ -30,12 +30,9 @@ jobs:
 
     - name: Archive published output
       run: |
-        mkdir publish-artifact
-        shopt -s nullglob
-        mkdir -p publish-artifact
-        for d in bin/Release/net*/publish; do
-          cp -r "$d"/* publish-artifact/
-        done
+        $source = Get-ChildItem -Recurse -Directory -Path .\bin\Release -Filter publish | Select-Object -First 1
+        if (-Not $source) { throw "No publish directory found." }
+        Copy-Item -Path "$($source.FullName)\*" -Destination publish-artifact -Recurse -Force
       shell: bash
 
     - name: Upload artifact
