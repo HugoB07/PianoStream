@@ -30,8 +30,15 @@ namespace PianoStream.Core.Midi
 
         public void Dispose()
         {
-            _midiIn?.Stop();
-            _midiIn?.Dispose();
+            try
+            {
+                _midiIn?.Stop();
+                _midiIn?.Dispose();
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogError(ex, "An error occurred while disposing the MIDI input handler.");
+            }
         }
     }
 }
