@@ -24,12 +24,6 @@ jobs:
     - name: Build project
       run: dotnet build --no-restore --configuration Release
 
-    - name: Create publish profile file
-      run: |
-        mkdir -p Properties/PublishProfiles
-        echo "${{ secrets.PUBLISH_PROFILE }}" > Properties/PublishProfiles/FolderProfile.pubxml
-      shell: bash
-
     - name: Publish using publish profile
       run: |
         dotnet publish -c Release -p:PublishProfile=Properties/PublishProfiles/FolderProfile.pubxml
