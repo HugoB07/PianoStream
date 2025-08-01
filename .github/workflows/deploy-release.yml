@@ -31,7 +31,11 @@ jobs:
     - name: Archive published output
       run: |
         mkdir publish-artifact
-        cp -r bin/Release/net*/publish/* publish-artifact/
+        shopt -s nullglob
+        mkdir -p publish-artifact
+        for d in bin/Release/net*/publish; do
+          cp -r "$d"/* publish-artifact/
+        done
       shell: bash
 
     - name: Upload artifact
