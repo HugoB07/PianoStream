@@ -33,7 +33,7 @@ jobs:
         $source = Get-ChildItem -Recurse -Directory -Path .\bin\Release -Filter publish | Select-Object -First 1
         if (-Not $source) { throw "No publish directory found." }
         Copy-Item -Path "$($source.FullName)\*" -Destination publish-artifact -Recurse -Force
-      shell: bash
+      shell: pwsh
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
