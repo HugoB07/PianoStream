@@ -1,4 +1,4 @@
-﻿namespace PianoStream.Utils
+﻿namespace PianoStream.Core.Utils
 {
     public class DspProcessor
     {

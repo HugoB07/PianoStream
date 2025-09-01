@@ -1,6 +1,6 @@
 ﻿using NAudio.Wave;
 using NFluidsynth;
-using PianoStream.Utils;
+using PianoStream.Core.Utils;
 
 namespace PianoStream.Core.Audio
 {

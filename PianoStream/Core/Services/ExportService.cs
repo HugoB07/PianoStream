@@ -4,7 +4,7 @@ using NAudio.Midi;
 using NAudio.Wave;
 using NFluidsynth;
 using PianoStream.Core.Models;
-using PianoStream.Utils;
+using PianoStream.Core.Utils;
 using System.IO;
 
 namespace PianoStream.Core.Services

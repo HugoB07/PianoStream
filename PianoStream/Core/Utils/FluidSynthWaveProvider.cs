@@ -1,7 +1,7 @@
 ﻿using NAudio.Wave;
 using NFluidsynth;
 
-namespace PianoStream.Utils
+namespace PianoStream.Core.Utils
 {
     public class FluidSynthWaveProvider : IWaveProvider
     {
@@ -17,10 +17,10 @@ namespace PianoStream.Utils
         public FluidSynthWaveProvider(Synth synth, bool enableNoiseCancellation = false)
         {
             this.synth = synth;
-            this.dsp = new DspProcessor(); // Initialize DSP processor
-            this.EnableNoiseCancellation = enableNoiseCancellation;
+            dsp = new DspProcessor(); // Initialize DSP processor
+            EnableNoiseCancellation = enableNoiseCancellation;
 
-            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2); 
+            waveFormat = WaveFormat.CreateIeeeFloatWaveFormat(44100, 2);
             leftBuffer = new float[2048];
             rightBuffer = new float[2048];
         }
@@ -29,8 +29,8 @@ namespace PianoStream.Utils
 
         public int Read(byte[] buffer, int offset, int count)
         {
-            int totalSamples = count / 4;          
-            int frameCount = totalSamples / 2;      
+            int totalSamples = count / 4;
+            int frameCount = totalSamples / 2;
 
             if (leftBuffer.Length < frameCount)
             {
@@ -43,12 +43,12 @@ namespace PianoStream.Utils
 
             synth.WriteSampleFloat(frameCount, leftSpan, 0, 1, rightSpan, 0, 1);
 
-            if(EnableNoiseCancellation)
+            if (EnableNoiseCancellation)
             {
                 dsp.Process(leftBuffer, rightBuffer, frameCount);
             }
 
-            float gain = 8.0f; 
+            float gain = 8.0f;
             for (int i = 0; i < frameCount; i++)
             {
                 leftBuffer[i] *= gain;
@@ -64,7 +64,7 @@ namespace PianoStream.Utils
                 byteIndex += 4;
             }
 
-            return frameCount * 2 * 4; 
+            return frameCount * 2 * 4;
         }
     }
 }
